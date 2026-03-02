@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Perfil{% endblock title %}
+
+{% block content %}
+<style>
+    /* ESTILOS DE TAILWIND CSS  */
+    .form-style {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem; 
+        border-width: 1px; 
+        border-color: #D1D5DB; 
+        border-radius: 0.5rem; 
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+        font-size: 0.875rem; 
+    }
+</style>
+<div class="container mx-auto mt-8 px-4">
+    <div class="max-w-xl mx-auto">
+        <div class="bg-white shadow-xl rounded-2xl p-8">
+            <h1 class="text-3xl font-extrabold text-indigo-700 mb-6 text-center">Editar Mi Perfil</h1>
+            
+            <!-- msj exito -->{% if messages %}
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Campos no de formulario -->{% if form.non_field_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!--  CAMPO AVATAR --><div class="mb-6 border-b pb-4 border-gray-100">
+                    <label for="{{ form.avatar.id_for_label }}" class="block text-xl font-medium text-gray-800 mb-3 text-center">
+                        Mi Avatar
+                    </label>
+                    <div class="flex items-center space-x-4 justify-center">
+                        
+                        <!-- Muestra la imagen actual y el enlace para eliminar -->{% if form.avatar.value %}
+                            <div>
+                                <img src="{{ form.avatar.value.url }}" alt="Avatar actual" class="h-24 w-24 object-cover rounded-full shadow-md">
+                            </div>
+                            <div class="text-sm">
+                                <p class="text-gray-600 mb-1">Cambiar imagen actual</p>
+                               <div class="flex items-center space-x-2">
+                                    {{ form.avatar.clear }}
+                                    <label for="{{ form.avatar.clear.id_for_label }}" class="text-red-600 hover:text-red-800 cursor-pointer">
+                                        Eliminar
+                                    </label>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="h-24 w-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <p class="text-gray-500">Subir una imagen</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-4 flex justify-center">
+                        <input type="file" name="{{ form.avatar.name }}" id="{{ form.avatar.id_for_label }}" class="text-sm">
+                    </div>
+                    
+                    <!-- detectar errores en avatar-->{% for error in form.avatar.errors %}
+                        <p class="mt-1 text-sm text-red-600 text-center">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.username.label }}
+                    </label>
+                    {{ form.username | add_class:"form-style" }}
+                    {% for error in form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Email --><div class="mb-4">
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.email.label }}
+                    </label>
+                    {{ form.email | add_class:"form-style" }}
+                    {% for error in form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Número de Teléfono --><div class="mb-4">
+                    <label for="{{ form.nro_telefono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.nro_telefono.label }}
+                    </label>
+                    {{ form.nro_telefono | add_class:"form-style" }}
+                    {% for error in form.nro_telefono.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-md">
+                    Guardar Cambios
+                </button>
+            </form>
+            
+            <p class="mt-6 text-center text-sm">
+                <a href="{% url 'rustikal:lista' %}" class="text-gray-500 hover:text-gray-700">Volver a la Tienda</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

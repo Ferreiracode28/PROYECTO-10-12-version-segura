@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ producto.nombre }} | Rustikal
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-2xl">
+
+    <nav class="text-sm font-medium text-gray-500 mb-6">
+        <a href="{% url 'rustikal:lista' %}" class="hover:text-indigo-600">Tienda</a>
+        <span class="mx-2">/</span>
+        <a href="{% url 'rustikal:lista_por_categoria' categoria_nombre=producto.categoria.nombre|lower %}"
+            class="hover:text-indigo-600">
+            {{ producto.categoria.nombre }}
+        </a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-900">{{ producto.nombre }}</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-10">
+
+        <div class="lg:w-1/2">
+            <div class="mb-4 rounded-xl overflow-hidden shadow-lg">
+                {% if producto.imagen %}
+                <img id="main-image" src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}"
+                    class="w-full h-auto object-cover max-h-[600px] transition duration-300">
+                {% else %}
+                <div id="main-image-placeholder"
+                    class="w-full h-[600px] bg-gray-200 flex items-center justify-center text-gray-500 text-xl">
+                    Imagen Principal
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-4 gap-2">
+                {% for imagen in producto.imagenes.all %}
+                <img src="{{ imagen.imagen.url }}" alt="Vista {{ forloop.counter }} de {{ producto.nombre }}"
+                    class="w-full h-24 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-indigo-500 transition duration-150"
+                    onclick="document.getElementById('main-image').src = '{{ imagen.imagen.url }}'">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="lg:w-1/2">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">{{ producto.nombre }}</h1>
+            <p class="text-xl text-gray-500 mb-4">{{ producto.genero }}</p>
+            <p class="text-4xl font-bold text-indigo-600 mb-6">
+                ${{ producto.precio|floatformat:2 }}
+            </p>
+
+            <div class="mb-6 border-b pb-4">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Descripción</h3>
+                <p class="text-gray-600 leading-relaxed">{{ producto.descripcion|linebreaksbr }}</p>
+            </div>
+
+            <form method="POST" action="{% url 'carrito:agregar_carrito' producto_id=producto.id %}">
+                {% csrf_token %}
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3">Talla:</h3>
+                    <div class="flex flex-wrap gap-3">
+                        {% for variante in variantes_disponibles %}
+                        <label
+                            class="relative cursor-pointer flex items-center justify-center w-12 h-12 rounded-full border-2 border-gray-300 text-sm font-medium hover:border-indigo-500 transition duration-150 {% if variante.stock == 0 %}opacity-50 cursor-not-allowed bg-gray-100{% endif %}"
+                            title="Stock: {{ variante.stock }}">
+
+                            <input type="radio" name="talle_seleccionado" value="{{ variante.talle.id }}"
+                                class="sr-only peer" {% if forloop.first %}checked{% endif %} {% if variante.stock == 0%}disabled{% endif %}>
+                            
+                            <span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 
+                                w-full h-full flex items-center justify-center rounded-full">
+                                {{ variante.talle.nombre }}
+                            </span>
+                        </label>
+
+                        {% empty %}
+                        <p class="text-red-500 font-medium">¡Producto Agotado! No hay tallas disponibles.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3">Cantidad:</h3>
+
+                    <div class="flex items-center space-x-3">
+
+                        <!-- boton paraa restar -->
+                        <button type="button" id="quantity-decrease"
+                            class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full text-xl font-bold hover:bg-gray-300 transition">
+                            –
+                        </button>
+
+                        <!--  cantidad -->
+                        <input type="text" id="quantity-input" name="cantidad" value="1"
+                            class="w-14 text-center border border-gray-300 rounded-lg py-2 text-lg font-medium" readonly>
+
+                        <!-- boton para sumar -->
+                        <button type="button" id="quantity-increase"
+                            class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full text-xl font-bold hover:bg-gray-300 transition">
+                            +
+                        </button>
+                    </div>
+                </div>
+                
+
+                <div class="flex items-center space-x-4 mt-6">
+                    {% if variantes_disponibles %}
+                    <button type="submit"
+                        class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-200">
+                        Añadir al Carrito
+                    </button>
+                    {% else %}
+                    <button type="button" disabled
+                        class="px-8 py-3 bg-gray-400 text-white font-semibold rounded-lg shadow-md cursor-not-allowed">
+                        Agotado
+                    </button>
+                    {% endif %}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- para sumar y restar cantidades -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const decreaseBtn = document.getElementById("quantity-decrease");
+        const increaseBtn = document.getElementById("quantity-increase");
+        const quantityInput = document.getElementById("quantity-input");
+
+        decreaseBtn.addEventListener("click", function () {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+
+        increaseBtn.addEventListener("click", function () {
+            let value = parseInt(quantityInput.value);
+            quantityInput.value = value + 1;
+        });
+    });
+</script>
+
+{% endblock content %}

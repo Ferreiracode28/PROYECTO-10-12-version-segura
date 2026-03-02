@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de Pedidos{% endblock title %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-8">
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2">Historial de Pedidos</h1>
+
+    {% if pedidos_usuario %}
+    
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                ID Pedido
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Acción
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for pedido in pedidos_usuario %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                #{{ pedido.id }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ pedido.creado|date:"d M Y" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">
+                                ${{ pedido.get_total_cost|floatformat:2 }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if pedido.estado == 'ENTREGADO' %}bg-green-100 text-green-800
+                                    {% elif pedido.estado == 'ENVIADO' %}bg-blue-100 text-blue-800
+                                    {% elif pedido.estado == 'PAGADO' %}bg-yellow-100 text-yellow-800
+                                    {% elif pedido.estado == 'PENDIENTE' %}bg-gray-100 text-gray-800
+                                    {% elif pedido.estado == 'CANCELADO' %}bg-red-100 text-red-800
+                                    {% endif %}">
+                                    {{ pedido.get_estado_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href="{% url 'pedidos:detalle' pk=pedido.pk %}" class="text-indigo-600 hover:text-indigo-900">
+                                    Ver Detalles
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% comment %} Opcional: Paginación {% endcomment %}
+        {% if is_paginated %}
+        <nav class="mt-4 flex justify-center space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded-md text-gray-700 hover:bg-gray-100">Anterior</a>
+            {% endif %}
+
+            <span class="px-3 py-1 border rounded-md bg-indigo-500 text-white">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded-md text-gray-700 hover:bg-gray-100">Siguiente</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+        
+    {% else %}
+        <div class="text-center py-10 bg-white rounded-lg shadow-md">
+            <p class="text-xl text-gray-600">Aún no has realizado ningún pedido.</p>
+            <a href="{% url 'rustikal:lista' %}" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Ir a la Tienda
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
