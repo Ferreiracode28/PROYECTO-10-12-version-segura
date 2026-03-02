@@ -1,4 +1,4 @@
-🛍️ Desarrollo del Proyecto – Tienda de Ropa Web
+ Desarrollo del Proyecto – Tienda de Ropa Web
 
 En este proyecto desarrollamos una página web de una tienda de ropa que simula el funcionamiento de un comercio online. La página permite que los usuarios se registren, inicien sesión, visualicen productos con sus respectivas imágenes, los agreguen al carrito y realicen pedidos, logrando una experiencia clara y organizada.
 
@@ -8,7 +8,7 @@ A lo largo del desarrollo incorporamos validaciones en toda la página para cont
 
 Nos dividimos las tareas de forma equilibrada, aunque trabajamos constantemente en conjunto para integrar cada parte y asegurarnos de que todo funcione correctamente.
 
-👥 División de tareas
+ División de tareas
 
 Luciano se encargó principalmente de la sección de pedidos, desarrollando la lógica necesaria para que las compras se registren y se relacionen correctamente con los usuarios y el carrito. Además, colaboró en las validaciones del proceso de compra y en la organización de la administración vinculada a los pedidos.
 
@@ -18,11 +18,11 @@ Ailén se encargó principalmente del carrito de compras, desarrollando la funci
 
 Además, los tres trabajamos en conjunto en la estructura general del sistema, asegurándonos de que todas las partes estén conectadas de manera coherente y que la aplicación funcione de forma completa.
 
-🛠️ Desarrollo
+ Desarrollo
 
 El desarrollo lo realizamos utilizando Visual Studio Code y, una vez finalizado, subimos el proyecto a GitHub para poder compartirlo.
 
-🎓 Conclusión
+ Conclusión
 
 Este proyecto representó un desafío importante para nosotros, ya que implicó integrar muchas partes distintas dentro de una misma aplicación. Durante el desarrollo tuvimos varias complicaciones, especialmente al momento de conectar las diferentes secciones del sistema y lograr que todo funcione de manera coherente. En varias ocasiones surgieron errores que nos llevaron tiempo de prueba y corrección hasta poder resolverlos.
 
